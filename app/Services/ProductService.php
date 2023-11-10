@@ -23,7 +23,7 @@ class ProductService
             'name' => 'required',
             'description' => 'required',
             'price' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ];
 
         $validator = Validator::make($data, $rules);
@@ -47,12 +47,21 @@ class ProductService
 
         // sort the products by name/price
         if ($request->has('sort')) {
-            $products = $products->sortBy($request->get('sort'));
+            $sortField = $request->get('sort');
+            $sortDirection = 'asc'; // You can change this based on your requirements
+        
+            $products = $products->orderBy($sortField, $sortDirection);
+            // $products = $products->sortBy($request->get('sort'));
         }
 
         // filter the products
         if ($request->has('category')) {
-            $products = $products->where('category_id', $request->get('category'));
+
+            $categoryId = $request->get('category');
+
+            $products = $products->whereHas('categories', function ($query) use ($categoryId) {
+                $query->where('category_id', $categoryId);
+            });
         }
 
         // Paginatiopn

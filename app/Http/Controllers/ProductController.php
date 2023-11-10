@@ -21,7 +21,7 @@ class ProductController extends Controller
                 'name' => 'required',
                 'description' => 'required',
                 'price' => 'required|numeric',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
     
             // upload the image.
